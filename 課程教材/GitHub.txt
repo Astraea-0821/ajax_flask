@@ -1,0 +1,30 @@
+https://github.com/HsiaoHungWang/ajax_flask
+
+pip install flask flask-restful flask-cors Flask-SQLAlchemy
+
+google-ai-generativelanguage==0.6.15
+google-api-core==2.28.1
+google-api-python-client==2.187.0
+google-auth==2.45.0
+google-auth-httplib2==0.3.0
+google-genai==1.56.0
+googleapis-common-protos==1.72.0
+greenlet==3.3.0
+grpcio==1.76.0
+grpcio-status==1.71.2
+
+
+Flask  => template  [html/css + data] => HTML
+<table>
+  <tr>
+    <td>1</td>
+    <td>100</td>
+  </tr>
+</table>
+
+API => JSON => 瀏覽器(JSON+HTML)
+
+[1,100]
+
+click
+change

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajax_Flask 專案</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+    {% include '_navbar.html' %}
+    <div class="container">
+
+
+        <div class="container mt-5">
+            <!-- <div class="row justify-content-center"> -->
+            <button id="buttonStart" class="btn btn-primary">Ajax 開始</button>
+            <button id="buttonStart" class="btn btn-primary">Ajax 結束</button>
+            <img id="img1" src="static/images/Loading.gif" style="display: none;" alt="載入中..." />
+
+
+            <div id="divInfo" class="alert alert-info mt-5"></div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const divInfo = document.querySelector('#divInfo');
+        const imgLoader = document.querySelector('#img1');
+        const btnStart = document.querySelector('#buttonStart');
+
+        // const apiUrl = 'http://127.0.0.1:5000/api/hello1';
+
+
+        btnStart.addEventListener('click', async () => {
+            const apiUrl = 'http://127.0.0.1:5000/api/hello';
+
+            //async await
+            const response = await fetch(apiUrl);
+            //先確認 ok 為 true
+            if (response.ok) {
+                //再確認格式是否正確
+                const contentType = response.headers.get('Content-Type');
+                if (contentType && contentType.includes('application/json')) {
+                    const data = await response.json();
+                    divInfo.innerHTML = `<h2>${data.message}</h2>`;
+                } else {
+                    console.log('回傳資料格式不正確!!')
+                }
+
+            } else {
+                if (response.status >= 500) {
+                    console.log('伺服器發生錯誤!!')
+                } else if (response.status >= 400) {
+                    console.log('呼叫錯誤!!')
+                } else {
+                    console.log('請聯絡客服!!')
+                }
+                console.log('status：', response.status);
+            }
+
+        })
+
+        // console.log(fetch(apiUrl));
+
+        // 寫法1
+        // fetch(apiUrl)
+        //     .then((res) => {
+        // console.log(res)
+        // console.log(res.headers.get("Content-Type"));
+        // console.log(res.headers.get("Content-Length"));
+        // console.log(res.ok);
+        // console.log(res.body);
+        // console.log(res.json()); //讀取body中json格式的資料，回傳的又是一個promise物件
+        //             return res.json();
+        //         })
+        //         .then(data => {
+        //             console.log(data);
+        //         })
+        // })
+
+
+
+        // 寫法2
+        //     fetch(apiUrl)
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             // divInfo.textContent = JSON.stringify(data); //JSON物件轉成JSON字串
+        //             divInfo.textContent = data.message;
+        //         })
+        // })
+
+
+
+        // callback function : 回呼函式(非同步)
+        // setTimeout(function () {
+        //     console.log('A');
+        // }, 3000);
+        // setTimeout(function () {
+        //     console.log('B');
+        // }, 2000);
+        // setTimeout(function () {
+        //     console.log('C');
+        // }, 1000);
+
+        // 回呼函式實現同步
+        // setTimeout(function () {
+        //     console.log('A');
+        //     setTimeout(function () {
+        //         console.log('B');
+        //         setTimeout(function () {
+        //             console.log('C');
+        //         }, 1000);
+        //     }, 1000);
+        // }, 1000);
+
+        // ()=>{}  : 箭頭函式
+        // btnStart.addEventListener('click',()=>{
+        //     console.log("click");
+        // })
+
+        //async/await
+        // async function callPromise() {
+
+        // }
+    </script>
+</body>
+
+</html>

@@ -21,11 +21,11 @@
         <div class="container mt-5">
             <!-- <div class="row justify-content-center"> -->
             <button id="buttonStart" class="btn btn-primary">Ajax 開始</button>
-            <button id="buttonStart" class="btn btn-primary">Ajax 結束</button>
+            <button id="buttonEnd" class="btn btn-primary">Ajax 結束</button>
             <img id="img1" src="static/images/Loading.gif" style="display: none;" alt="載入中..." />
 
 
-            <div id="divInfo" class="alert mt-5"></div>
+            <div id="divInfo" class="alert alert-info mt-5"></div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -34,6 +34,263 @@
         const divInfo = document.querySelector('#divInfo');
         const imgLoader = document.querySelector('#img1');
         const btnStart = document.querySelector('#buttonStart');
+        const btnEnd = document.querySelector('#buttonEnd');
+
+        // function hi(a){
+        //
+        // }
+
+        // (a,b)=>{} ()=>{}
+        // a => {
+        //    ....
+        //    ....
+        //}
+
+        // a => console.log(a)
+
+        let abortController = null;
+
+        btnStart.addEventListener('click', async () => {
+            const apiUrl = 'http://127.0.0.1:5000/api/hello';
+            abortController = new AbortController();
+            const signal = abortController.signal;
+
+            const timer = setTimeout(() => {
+                abortController.abort();
+            }, 3000);
+            try {
+                //有可能發生錯誤
+                //async await
+                imgLoader.style.display = 'inline' //顯示執行中的圖示
+                btnStart.disabled = true;         //停用按鈕功能
+                const response = await fetch(apiUrl,{signal});
+
+                //先確認 ok 為 true
+                if (!response.ok) throw new Error('有錯誤，無法取得資料!!');
+
+                const data = await response.json();
+                divInfo.innerHTML = `<h2>${data.message}</h2>`;
+
+                // //先確認 ok 為 true
+                // if (response.ok) {
+                //     //再確認格式是否正確
+                //     const contentType = response.headers.get('Content-Type');
+                //     if (contentType && contentType.includes('application/json')) {
+                //         const data = await response.json();
+                //         divInfo.innerHTML = `<h2>${data.message}</h2>`;
+                //     } else {
+                //         console.log('回傳資料格式不正確!!')
+                //     }
+
+                // } else {
+                //     if (response.status >= 500) {
+                //         console.log('伺服器發生錯誤!!')
+                //     } else if (response.status >= 400) {
+                //         console.log('呼叫錯誤!!')
+                //     } else {
+                //         console.log('請聯絡客服!!')
+                //     }
+                //     console.log('status：', response.status);
+                // }
+
+            } catch (error) {
+                // console.log(error);
+                 if (signal.aborted) { //true 表示取消了
+                    divInfo.textContent = error;
+                } else {
+                    divInfo.textContent = error.message;
+                }
+
+            } finally {
+                imgLoader.style.display = 'none' //隱藏執行中的圖示
+                btnStart.disabled = false;         //啟用按鈕功能
+                clearTimeout(timer); //清除計時的功能
+            }
+
+        })
+        
+        btnEnd.addEventListener('click', () => {
+            if (abortController) {
+                abortController.abort(); //取消 fetch() 的執行
+            }
+
+        })
+            // //async await
+            // const response = await fetch(apiUrl);
+            // //先確認 ok 為 true
+            // if (response.ok) {
+            //     //再確認格式是否正確
+            //     const contentType = response.headers.get('Content-Type');
+            //     if (contentType && contentType.includes('application/json')) {
+            //         const data = await response.json();
+            //         divInfo.innerHTML = `<h2>${data.message}</h2>`;
+            //     } else {
+            //         console.log('回傳資料格式不正確!!')
+            //     }
+
+            // } else {
+            //     if (response.status >= 500) {
+            //         console.log('伺服器發生錯誤!!')
+            //     } else if (response.status >= 400) {
+            //         console.log('呼叫錯誤!!')
+            //     } else {
+            //         console.log('請聯絡客服!!')
+            //     }
+            //     console.log('status：', response.status);
+            // }
+
+
+
+
+
+
+            // promise
+            // fetch(apiUrl)
+            //     .then(response => response.json())
+            //     .then(data => {
+            //         // divInfo.textContent = JSON.stringify(data); //JSON物件轉成JSON字串
+            //         divInfo.textContent = data.message;
+            //     })
+
+
+            // console.log(fetch(apiUrl));
+            // fetch(apiUrl)
+            //     .then(res => {
+            //         // console.log(res);
+            //         // console.log(res.headers.get('Content-Type'));
+            //         // console.log(res.headers.get('Content-Length'));
+            //         // console.log(res.status);
+            //         // console.log(res.ok);
+            //         // console.log(res.body);
+            //         //console.log(res.json());  //讀取 body 中 json 格式的資料，回傳的又是一個promise物件
+            //         return res.json();
+            //     })
+            //     .then(data => {
+            //         console.log(data);
+            //     })
+
+        
+
+
+
+
+
+        //callback 回呼 => 非同步
+        // setTimeout(function () {
+        //     //傳送訊息給A
+        //     console.log('A');
+        //     setTimeout(function () {
+        //         //傳送訊息給B
+        //         console.log('B');
+        //         setTimeout(function () {
+        //             //傳送訊息給C
+        //             console.log('C');
+        //             setTimeout(function () {
+        //                 //傳送訊息給C
+        //                 console.log('D');
+        //             }, 1000);
+        //         }, 1000);
+        //     }, 1000);
+        // }, 1000);
+
+
+        // function printSomething(data) {
+        //     const promise = new Promise((resolve, reject) => {
+        //         setTimeout(() => {
+        //             resolve(data);
+        //         }, 1000)
+        //     })
+        //     return promise;
+        // }
+
+        // console.log(printSomething("A"));  //Promise物件
+        // printSomething("A")
+        //     .then(result => {
+        //         console.log(result);
+        //         return printSomething("B")
+        //     })
+        //     .then(result => {
+        //         console.log(result);
+        //         return printSomething("C")
+        //     })
+        //     .then(result => {
+        //         console.log(result);
+        //         return printSomething("D")
+        //     })
+        //     .then(result => {
+        //         console.log(result);
+        //     })
+
+
+        // // async/await
+        // async function callPromise() {
+        //     let result = await printSomething("A")
+        //     console.log(result);
+        //     result = await printSomething("B")
+        //     console.log(result);
+        //     result = await printSomething("C")
+        //     console.log(result);
+        //     result = await printSomething("D")
+        //     console.log(result);
+
+        // }
+
+
+        // callPromise();
+
+
+        // //建立 Promise 物件
+        // const promise = new Promise((resolve, reject) => {
+        //     //非同步程式碼寫在這裡
+
+        //     if (true) {
+        //         resolve('成功');
+        //     } else {
+        //         reject('失敗');
+        //     }
+        // })
+
+
+        // //Promise物件使用
+        // console.log(promise);
+        // promise
+        //     .then(data => console.log(data))
+        //     .catch(error => console.log(error))
+        //     .finally(() => console.log('end'));
+
+
+        // promise
+        //     .then(() => {
+        //         console.log('A')
+        //     })
+        //     .then(() => {
+        //         console.lo('B')
+        //     })
+        //     .then(() => {
+        //         console.log('C')
+        //     })
+        //     .then(() => {
+        //         console.log('D')
+        //     })
+
+        // async function demo() {
+        //     let data = await show("A");
+        //     console.log(data);
+        //     data = await show("B");
+        //     console.log(data);
+        //     data = await show("C");
+        //     console.log(data);
+        //     data = await show("D");
+        //     console.log(data);
+
+        // }
+
+
+        // ()=>{} 箭頭函式
+        // btnStart.addEventListener('click', () => {
+        //     console.log('click');
+        // })
+
 
     </script>
 </body>
